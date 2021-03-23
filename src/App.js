@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { interval, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
@@ -10,34 +10,34 @@ function App() {
   const [status, setStatus] = useState(Status[1]);
 
   useEffect(() => {
-    const unsubscribe$ = new Subject();
+    const unsubscribe = new Subject();
     interval(1000)
-      .pipe(takeUntil(unsubscribe$))
+      .pipe(takeUntil(unsubscribe))
       .subscribe(() => {
         if (status === "run") {
           setSec(v => v + 1000);
         }
       });
     return () => {
-      unsubscribe$.next();
-      unsubscribe$.complete();
+      unsubscribe.next();
+      unsubscribe.complete();
     };
   }, [status]);
 
-  const start = React.useCallback(() => {
+  const start = useCallback(() => {
     setStatus("run");
   }, []);
 
-  const stop = React.useCallback(() => {
+  const stop = useCallback(() => {
     setStatus("stop");
     setSec(0);
   }, []);
 
-  const reset = React.useCallback(() => {
+  const reset = useCallback(() => {
     setSec(0);
   }, []);
 
-  const wait = React.useCallback(() => {
+  const wait = useCallback(() => {
     setStatus("wait");
   }, []);
 
